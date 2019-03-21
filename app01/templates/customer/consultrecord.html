@@ -1,0 +1,104 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="tpl-content-wrapper">
+        <div class="tpl-portlet-components">
+            <div class="portlet-title am-g">
+                <div class="caption font-green bold am-u-sm-3">
+                    跟进记录详情
+                </div>
+                <!--右侧搜索框
+                <div class="tpl-portlet-input">
+                    <form action="" method="get" class="am-form-inline" role="form">
+                        <div class="am-form-group">
+                            <select name="field" id="s1" class="am-u-sm-2 am-form-field search-select">
+                                <option value="">-----</option>
+                                <option value="name">姓名</option>
+                                <option value="qq">QQ</option>
+                                <option value="phone">手机号</option>
+                                <option value="status">当前状态</option>
+                            </select>
+                            <input type="text" name="q" class="am-u-sm-2 am-form-field search-input" placeholder="请输入搜索文本">
+                            <button type="submit" class="am-btn am-btn-default search-btn"><span class="am-icon-search"></span></button>
+                        </div>
+                    </form>
+                </div>
+                右侧搜索框 end -->
+
+            </div>
+
+            <!-- 批量操作的form表单 -->
+            <form action="" method="post">
+            {% csrf_token %}
+            <div class="tpl-block">
+
+                <div class="am-g">
+
+                    <div class="am-u-sm-12 am-u-md-4 am-u-md-offset-8">
+                        <div class="am-btn-toolbar am-fr">
+                            <div class="am-btn-group am-btn-group-xs">
+                                <a href="{% url 'add_consult_record' %}" class="am-btn am-btn-default am-btn-success">
+                                    <span class="am-icon-plus"></span> 添加跟进记录
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+
+                <!-- 表格 -->
+                <div class="am-g">
+                    <div class="am-u-sm-12">
+                        <form class="am-form">
+                            <table class="am-table am-table-striped am-table-hover table-main mytable">
+                                <thead>
+                                <tr>
+                                    <th>编号</th>
+                                    <th>客户姓名</th>
+                                    <th>当前状态</th>
+                                    <th>内容</th>
+                                    <th>销售</th>
+                                    <th>操作</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for record in consult_record_list %}
+                                    <tr>
+                                        <td>{{ forloop.counter }}</td>
+                                        <td>{{ record.customer.name }}</td>
+                                        <td>{{ record.customer.get_status }}</td>
+                                        <td>{{ record.note }}</td>
+                                        <td>{{ record.consultant|default:'暂无' }}</td>
+                                        <td>
+                                            <div class="am-btn-toolbar">
+                                                <div class="am-btn-group am-btn-group-xs">
+                                                    <a href="{% url 'edit_consult_record' record.pk %}" class="am-btn am-btn-default am-btn-xs am-text-secondary"><span class="am-icon-pencil-square-o"></span> 编辑</a>
+                                                    <a class="am-btn am-btn-default am-btn-xs am-text-danger am-hide-sm-only"><span class="am-icon-trash-o"></span> 删除</a>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                            <div class="am-cf">
+                                <div class="am-fr">
+                                    <ul class="am-pagination tpl-pagination">
+                                        {{ pagination.page_html|safe }}
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <hr>
+
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </form>
+
+        </div>
+    </div>
+{% endblock %}
+

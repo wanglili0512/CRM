@@ -1,0 +1,141 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="tpl-content-wrapper">
+        <div class="tpl-portlet-components">
+            <div class="portlet-title am-g">
+                <div class="caption font-green bold am-u-sm-3">
+                    报名列表
+                </div>
+
+                <div class="tpl-portlet-input">
+                    <form action="" method="get" class="am-form-inline" role="form">
+                        <div class="am-form-group">
+                            <select name="field" id="s1" class="am-u-sm-2 am-form-field search-select">
+                                <option value="">-----</option>
+                                <option value="name">姓名</option>
+                                <option value="qq">QQ</option>
+                                <option value="phone">手机号</option>
+                                <option value="status">当前状态</option>
+                            </select>
+                            <input type="text" name="q" class="am-u-sm-2 am-form-field search-input" placeholder="请输入搜索文本">
+                            <button type="submit" class="am-btn am-btn-default search-btn"><span class="am-icon-search"></span></button>
+                        </div>
+                    </form>
+                </div>
+
+            </div>
+
+            <!-- 批量操作的form表单 -->
+            <form action="" method="post">
+            {% csrf_token %}
+            <div class="tpl-block">
+                <div class="am-g">
+                    <div class="am-u-sm-12 am-u-md-3">
+                        <div class="am-form-group">
+                            <select name="action" data-am-selected>
+                                <option value="null">------</option>
+                                <option value="patch_delete">delete selected data</option>
+                                <option value="patch_reverse_s">公户转私户</option>
+                                <option value="patch_reverse_g">私户转公户</option>
+                            </select>
+                            <button class="am-btn bold gobtn">Go</button>
+                        </div>
+                    </div>
+
+                    <div class="am-u-sm-12 am-u-md-4">
+                        <div class="am-btn-toolbar am-fr">
+                            <div class="am-btn-group am-btn-group-xs">
+                                <a href="{% url 'add_enrollments' %}" class="am-btn am-btn-default am-btn-success">
+                                    <span class="am-icon-plus"></span> 添加记录
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- 表格 -->
+                <div class="am-g">
+                    <div class="am-u-sm-12">
+                        <form class="am-form">
+                            <table class="am-table am-table-striped am-table-hover table-main mytable">
+                                <thead>
+                                <tr>
+                                    <th class="table-check"><input type="checkbox" class="tpl-table-fz-check"></th>
+                                    <th>编号</th>
+                                    <th>客户姓名</th>
+                                    <th>报名原因</th>
+                                    <th>具体期望</th>
+                                    <th>报名日期</th>
+                                    <th>校区</th>
+                                    <th>所报班级</th>
+                                    <th>备注</th>
+                                    <th>操作</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for enrollment in enrollment_list %}
+                                    <tr>
+                                        <td><input type="checkbox" name="selected_pk_list" value="{{ customer.pk }}" ></td>
+                                        <td>{{ forloop.counter }}</td>
+                                        <td>{{ enrollment.customer.name }}</td>
+                                        <td>{{ enrollment.why_us }}</td>
+                                        <td>{{ enrollment.your_expectation }}</td>
+                                        <td>{{ enrollment.enrolled_date|date:'Y-m-d' }}</td>
+                                        <td>{{ enrollment.school }}</td>
+                                        <td>{{ enrollment.enrolment_class }}</td>
+                                        <td>{{ enrollment.memo }}</td>
+                                        <td>
+                                            <div class="am-btn-toolbar">
+                                                <div class="am-btn-group am-btn-group-xs">
+                                                    <a href="{% url 'edit_enrollments' enrollment.pk %}" class="am-btn am-btn-default am-btn-xs am-text-secondary"><span class="am-icon-pencil-square-o"></span> 编辑</a>
+                                                    <a class="am-btn am-btn-default am-btn-xs am-text-danger am-hide-sm-only"><span class="am-icon-trash-o"></span> 删除</a>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                            <div class="am-cf">
+                                <div class="am-fr">
+                                    <ul class="am-pagination tpl-pagination">
+                                        {{ pagination.page_html|safe }}
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <hr>
+
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </form>
+
+        </div>
+    </div>
+{% endblock %}
+
+{% block js %}
+    <script>
+        // 搜索状态字段时出现下拉菜单
+        $('#s1').change(function () {
+            if($(this).val()==="status"){
+                let s1 = `
+                  <select name='q' class='ss2 am-u-sm-2 am-form-field search-input'>
+                    <option value="signed">已报名</option>
+                    <option value="unregistered">未报名</option>
+                    <option value="studying">学习中</option>
+                    <option value="paid_in_full">学费已交齐</option>
+                  </select>
+                  `;
+                $(this).next().replaceWith(s1)
+            }
+        })
+
+
+    </script>
+{% endblock %}
+

@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="tpl-content-wrapper">
+        <div class="tpl-portlet-components">
+            <div class="portlet-title am-g">
+                <div class="caption font-green bold am-u-sm-3">
+                    成单量统计
+                </div>
+            </div>
+
+            <div class="am-g">
+                    <div class="am-u-sm-12 am-u-md-4">
+                        <div class="am-btn-toolbar am-fl">
+                            <div class="am-btn-group am-btn-group-xs">
+                                <a href="?date=today" class="am-btn am-btn-default">今天</a>
+                                <a href="?date=yesterday" class="am-btn am-btn-default">昨天</a>
+                                <a href="?date=week" class="am-btn am-btn-default">最近一周</a>
+                                <a href="?date=recent_month" class="am-btn am-btn-default">最近一个月</a>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+            <div class="tpl-block">
+                <!-- 表格 -->
+                <div class="am-g">
+                    <div class="am-u-sm-12">
+                        <table class="am-table am-table-striped am-table-hover table-main mytable">
+                            <thead>
+                            <tr>
+                                <th>编号</th>
+                                <th>客户姓名</th>
+                                <th>性别</th>
+                                <th>客户来源</th>
+                                <th>成交日期</th>
+                                <th>销售</th>
+                                <th>所报班级</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for customer in customer_list %}
+                                <tr>
+                                    <td>{{ forloop.counter }}</td>
+                                    <td>{{ customer.name }}</td>
+                                    <td>{{ customer.get_sex_display }}</td>
+                                    <td>{{ customer.get_source_display }}</td>
+                                    <td>{{ customer.deal_date|date:"Y-m-d" }}</td>
+                                    <td>{{ customer.consultant|default:'暂无' }}</td>
+                                    <td>{{ customer.get_classlist|default:'暂无' }}</td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+
+                        <hr>
+                    </div>
+                </div>
+
+                <div class="am-g">
+                    <div class="am-u-sm-8 am-u-sm-offset-2">
+
+                        <div id="main" style="width: 600px;height:400px;"></div>
+
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+{% endblock %}
+
+<script type="text/javascript" src="/static/js/echarts.common.min.js"></script>
+{% block js %}
+    <script>
+        var myChart = echarts.init(document.getElementById('main'));
+
+        option = {
+            color: ['#3398DB'],
+            tooltip : {
+                trigger: 'axis',
+                axisPointer : {            // 坐标轴指示器，坐标轴触发有效
+                    type : 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
+                }
+            },
+            grid: {
+                left: '3%',
+                right: '4%',
+                bottom: '3%',
+                containLabel: true
+            },
+            xAxis : [
+                {
+                    type : 'category',
+                    data : {{ ret_x|safe }},
+                    axisTick: {
+                        alignWithLabel: true
+                    }
+                }
+            ],
+            yAxis : [
+                {
+                    type : 'value'
+                }
+            ],
+            series : [
+                {
+                    name:'直接访问',
+                    type:'bar',
+                    barWidth: '60%',
+                    data:{{ ret_y|safe }}
+                }
+            ]
+        };
+        // 使用刚指定的配置项和数据显示图表。
+        myChart.setOption(option);
+    </script>
+{% endblock %}
+

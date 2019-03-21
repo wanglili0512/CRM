@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>登录</title>
+    <meta name="description" content="particles.js is a lightweight JavaScript library for creating particles.">
+    <meta name="author" content="wanglili" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link rel="stylesheet" type="text/css" href="/static/css/reset.css"/>
+    <link rel="stylesheet" media="screen" href="/static/css/reg_login.css">
+    <script type="text/javascript" src="/static/js/jquery.min.js"></script>
+</head>
+<body>
+
+<div id="particles-js">
+    <div class="login">
+        <p class="login-top">登录</p>
+
+        {% csrf_token %}
+        <div class="login-center clearfix">
+            <div class="login-center-img"><label class="iconfont labelFS" for="user">&#xe623;</label></div>
+            <div class="login-center-input">
+                <input type="text" id="user" placeholder="用户名" onfocus="this.placeholder=''" onblur="this.placeholder='用户名'"/>
+                <div class="login-center-input-text">用户名</div>
+            </div>
+        </div>
+
+        <div class="login-center clearfix">
+            <div class="login-center-img"><label class="iconfont labelFS" for="pwd">&#xe7b8;</label></div>
+            <div class="login-center-input">
+                <input type="password" id="pwd" placeholder="密码" onfocus="this.placeholder=''" onblur="this.placeholder='密码'"/>
+                <div class="login-center-input-text">密码</div>
+            </div>
+        </div>
+
+        <div class="login-center clearfix">
+            <div class="login-center-img"><label class="iconfont labelFS" for="validcode">&#xe615;</label></div>
+            <div class="login-center-input">
+                <input type="text" id="validcode" class="validcode" placeholder="验证码" onfocus="this.placeholder=''" onblur="this.placeholder='验证码'"/>
+                <div class="login-center-input-text">验证码</div>
+                <img width="88" height="30" src="/get_identifyCode/" alt="验证码" title="换一张" class="validImg" id="img">
+            </div>
+        </div>
+        <a href="javascript:void(0);" class="login-button login_btn">登录</a>
+        <p class="error"></p>
+    </div>
+</div>
+
+<script src="/static/js/particles.min.js"></script>
+<script src="/static/js/app.js"></script>
+
+<script>
+    // 基于 ajax 登录
+    $(".login_btn").click(function () {
+        $.ajax({
+            url:"",
+            type:"post",
+            // data发送默认的urlencoded格式就行，数据没那么深，没必要发json格式
+            data:{
+                 user:$("#user").val(),
+                 pwd:$("#pwd").val(),
+                 validcode:$("#validcode").val(),
+                 csrfmiddlewaretoken:$("[name='csrfmiddlewaretoken']").val()
+            },
+            success:function (response) {
+                console.log(response);
+                if(response.user){
+                    // 登录成功
+                    location.href="/all_customers/"
+                }
+                else{
+                    // 登录失败
+                    $(".error").html(response.err_msg)
+                }
+            }
+        })
+    });
+
+    //  验证码点击刷新：利用的图片url后边加问号可以重新发送请求的特性
+    $("#img").click(function () {
+        this.src += "?";
+    });
+
+</script>
+</body>
+</html>

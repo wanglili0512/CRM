@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>注册</title>
+    <meta name="description" content="particles.js is a lightweight JavaScript library for creating particles.">
+    <meta name="author" content="wanglili" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link rel="stylesheet" type="text/css" href="/static/css/reset.css"/>
+    <link rel="stylesheet" media="screen" href="/static/css/reg_login.css">
+    <script type="text/javascript" src="/static/js/jquery.min.js"></script>
+</head>
+<body>
+
+<div id="particles-js">
+    <div class="login">
+        <p class="reg-top login-top">注册</p>
+        {% csrf_token %}
+        {% for field in form %}
+            <div class="login-center clearfix">
+                <div class="login-center-img"><label class="iconfont labelFS" for="">{{ field.label|safe }}</label></div>
+                <div class="login-center-input">
+                    {{ field }}
+                    <span class="regError"></span>
+                    <div class="login-center-input-text labelName">用户名</div>
+                </div>
+            </div>
+        {% endfor %}
+
+        <a href="javascript:void(0);" class="login-button reg_btn">注册</a>
+        <p class="error"></p>
+    </div>
+</div>
+
+<script src="/static/js/particles.min.js"></script>
+<script src="/static/js/app.js"></script>
+
+<script>
+    // 注册页面输入框获取焦点显示对应字段
+    var labelList = ['用户名', "手机号", "密码", "确认密码", "邮箱"];
+    $.each(labelList, function (i, j) {
+        $('.labelName').eq(i).html(j);
+    });
+
+    // ajax注册
+    $(".reg_btn").click(function () {
+        $.ajax({
+            url:"",
+            type:"post",
+            data:{
+                username:$("#id_username").val(),
+                tel:$("#id_tel").val(),
+                password:$("#id_password").val(),
+                r_pwd:$("#id_r_pwd").val(),
+                email:$("#id_email").val(),
+                csrfmiddlewaretoken:$("[name='csrfmiddlewaretoken']").val()
+            },
+            success:function (res) {
+                console.log("res", res);
+                if (res.user){
+                    // 注册成功
+                    location.href="/login/"
+                } else {
+                     // 清除错误
+                    $(".regError").html("");
+                    //  展示新的错误
+                    $.each(res.err_msg,function (i,j) {
+                        $("#id_"+i).attr("placeholder", "").val("").next().html(j[0]).parent();
+                    })
+                }
+            }
+        })
+    });
+
+    // 输入框获取焦点则清除错误信息
+    var oInputList = $(".login-center-input input");
+    $(oInputList).each(function (i,j) {
+        $(j).on('input', function () {
+            $(this).next().html("");
+        });
+    })
+
+</script>
+</body>
+</html>

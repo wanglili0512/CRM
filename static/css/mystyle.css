@@ -1,0 +1,28 @@
+/*cs_record_list.html*/
+/*搜索输入框*/
+.search-select{width: 78px!important; padding-left: 8px; margin-right: 8px; border-radius: 3px;}
+.search-input{padding-left: 8px; border-radius: 3px; margin-right: 4px; position: relative; z-index: 5;}
+.search-btn{width: 35px; height: 33px; position: relative; z-index: 10; border: 0; border-radius: 3px;}
+.search-btn span{position: absolute; top: 6px; left: 11px;}
+.ss2{width: 120px!important;}
+.mytable{padding-left: 0;padding-right: 0;}
+.gobtn{color: #93a2a9;}
+.status_span{font-size: 1.2rem; padding: 2px 4px; border-radius: 2px}
+
+
+/*add_edit_consultrecord.html*/
+.add_lb{padding-right: 0;}
+#id_course li{font-size: 1.4rem;}
+.error{color: darkred; font-size: 1.2rem;}
+.mybreadcrumb{margin-top: 0; margin-bottom: 5px;}
+
+.per_tips{padding-left: 1.25rem; font-size: 0.8em; color: #999; margin: 1rem 0 0;}
+.i-mr{margin-right: 4px;}
+.mypanel{padding: 0;}
+.div-mr{margin-right: 1.5rem;}
+.div-mr input{top: 2px; position: relative; margin-right: 3px;}
+.text-bd{font-weight: bold;}
+
+.user_ul li.active a{color: red; font-weight: bold;}
+label{font-weight: normal;}
+.hidden{display: none;}

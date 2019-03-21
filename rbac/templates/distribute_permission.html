@@ -1,0 +1,162 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="tpl-content-wrapper">
+        <div class="tpl-portlet-components">
+            <div class="portlet-title am-g">
+                <div class="caption font-green bold am-u-sm-3">
+                    权限分配
+                </div>
+            </div>
+
+            <!-- 表格 -->
+            <div class="am-g">
+                <div class="am-u-sm-3">
+                    <div class="am-panel am-panel-secondary">
+                        <div class="am-panel-hd">
+                            <i class="am-icon-book"></i><span style="margin-left: 6px;">用户</span>
+                        </div>
+                        <div class="am-panel-bd">
+                            <ul class="user_ul">
+                                {% for user in user_list %}
+                                    <li class={% if user.id|safe == uid %}"active"{% endif %}>
+                                        <a href="?uid={{ user.id }}">{{ user.name }}</a>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="am-u-sm-3">
+                    <form action="" method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="postType" value="role">
+                        <div class="am-panel am-panel-secondary">
+                            <div class="am-panel-hd">
+                                <i class="am-icon-user"></i><span style="margin-left: 6px;">角色</span>
+                                <button type="submit" class="am-btn am-btn-primary am-btn-xs am-fr"><i class="am-icon-save i-mr"></i>保存</button>
+                            </div>
+                            <p class="per_tips">提示：点击用户后才能为其分配角色</p>
+                            <div class="am-panel-bd mypanel">
+                            <table class="am-table table-main mytable">
+                                <thead>
+                                <tr class="am-primary">
+                                    <th>角色</th>
+                                    <th>选择</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                    {% for role in role_list %}
+                                        <tr class={% if role.id|safe == rid %}"am-danger"{% endif %}>
+                                            {% load my_tags %}
+                                            <td><a href="?{% get_role_url request role.id %}">{{ role.title }}</a></td>
+                                            <td>
+                                                {% if role.id in role_id_list %}
+                                                    <input type="checkbox" name="roles" value="{{ role.id }}" checked />
+                                                {% else %}
+                                                    <input type="checkbox" name="roles" value="{{ role.id }}" />
+                                                {% endif %}
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        </div>
+                    </form>
+                </div>
+
+
+                <div class="am-u-sm-6">
+                    <form action="" method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="postType" value="permission">
+                        <div class="am-panel am-panel-secondary">
+                        <div class="am-panel-hd">
+                            <i class="am-icon-cubes"></i><span style="margin-left: 6px;">权限分配</span>
+                            {% if rid %}
+                                <button type="submit" class="am-btn am-btn-primary am-btn-xs am-fr"><i class="am-icon-save i-mr"></i>保存</button>
+                            {% endif %}
+                        </div>
+                        <p class="per_tips">提示：点击角色后才能为其分配权限</p>
+                        <div class="am-panel-bd mypanel">
+                            <table class="am-table table-main mytable">
+                                <tbody id="tbd">
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block js %}
+    <script>
+
+    $.ajax({
+        url:"/rbac/permissions_tree/",
+        type:"get",
+        success:function (res) {
+            console.log(res);
+            $.each(res, function (i, permission) {
+                console.log(i, permission);
+                var menu_title = permission["menu__title"];
+                var menu_pk = permission["menu__pk"];
+                var url = permission["url"];
+                var parent_id = permission["pid_id"];
+                var pk = permission["pk"];
+                var title = permission["title"];
+                if (menu_title){
+                    if($("#menu_"+menu_pk).length){
+                        var s = `
+                            <tr id="per_${pk}">
+                                <td class="am-cf">
+                                    <div class="div-mr am-fl">
+                                        <label><input name="permissions_id" value="${pk}" type="checkbox"><span>${title}</span></label>
+                                    </div>
+                                </td>
+                            </tr>
+                            `;
+                        $("#menu_"+menu_pk).parent().append(s);
+                    }else {
+                        var s = `
+                            <tr class="text-bd am-primary" id="menu_${menu_pk}"><td>${menu_title}</td></tr>
+                            <tr id="per_${pk}">
+                                <td class="am-cf">
+                                    <div class="div-mr am-fl">
+                                        <label><input name="permissions_id" value="${pk}" type="checkbox"><span>${title}</span></label>
+                                    </div>
+                                </td>
+                            </tr>
+                            `;
+                        $("#tbd").append(s);
+                    }
+                }else {
+                    var s = `
+                            <div class="div-mr am-fl">
+                                <label><input name="permissions_id" value="${pk}" type="checkbox"><span>${title}</span></label>
+                            </div>
+                        `;
+                    $("#per_"+parent_id+" td").append(s);
+                }
+            });
+
+            var per_id_list = {{ per_id_list }}
+            $.each(per_id_list, function (i, j) {
+                console.log($("[value='"+j+"']")[0]);
+                $("#tbd [value='"+j+"']").prop("checked", true);
+            })
+
+        }
+    })
+
+
+    </script>
+{% endblock %}
+

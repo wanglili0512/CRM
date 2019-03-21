@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="tpl-content-wrapper">
+        <div class="tpl-portlet-components">
+            <div class="portlet-title am-g">
+                <div class="caption font-green bold am-u-sm-3">
+                    班级学习记录
+                </div>
+            </div>
+
+            <!-- 批量操作的form表单 -->
+            <form action="" method="post">
+            {% csrf_token %}
+            <div class="tpl-block">
+                <div class="am-g">
+                    <div class="am-u-sm-12 am-u-md-3">
+                        <div class="am-form-group">
+                            <select name="action" data-am-selected>
+                                <option value="null">------</option>
+                                <option value="patch_create">批量创建学生学习记录</option>
+                                <option value="patch_delete">批量删除</option>
+                            </select>
+                            <button class="am-btn bold gobtn">Go</button>
+                        </div>
+                    </div>
+
+                    <div class="am-u-sm-12 am-u-md-4">
+                        <div class="am-btn-toolbar am-fr">
+                            <div class="am-btn-group am-btn-group-xs">
+                                <a href="{% url 'add_csRecord' %}" class="am-btn am-btn-default am-btn-success">
+                                    <span class="am-icon-plus"></span> 添加记录
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- 表格 -->
+                <div class="am-g">
+                    <div class="am-u-sm-12">
+                        <form class="am-form">
+                            <table class="am-table am-table-striped am-table-hover table-main mytable">
+                                <thead>
+                                <tr>
+                                    <th class="table-check"><input type="checkbox" class="tpl-table-fz-check"></th>
+                                    <th>班级</th>
+                                    <th>节次</th>
+                                    <th>讲师</th>
+                                    <th>考勤</th>
+                                    <th>录入成绩</th>
+                                    <th>操作</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for record in cs_record_list %}
+                                    <tr>
+                                        <td><input type="checkbox" name="selected_pk_list" value="{{ record.pk }}" ></td>
+                                        <td>{{ record.class_obj }}</td>
+                                        <td>{{ record.day_num }}</td>
+                                        <td>{{ record.teacher.username }}</td>
+                                        <td><a href="javascript:void(0);">考勤</a></td>
+                                        <td><a href="{% url 'inputscore' record.pk %}">录入成绩</a></td>
+                                        <td>
+                                            <div class="am-btn-toolbar">
+                                                <div class="am-btn-group am-btn-group-xs">
+                                                    <a href="{% url 'edit_csRecord' record.pk %}" class="am-btn am-btn-default am-btn-xs am-text-secondary"><span class="am-icon-pencil-square-o"></span> 编辑</a>
+                                                    <a href="{% url 'del_csRecord' record.pk %}" class="am-btn am-btn-default am-btn-xs am-text-danger am-hide-sm-only"><span class="am-icon-trash-o"></span> 删除</a>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                            <div class="am-cf">
+                                <div class="am-fr">
+                                    <ul class="am-pagination tpl-pagination">
+                                        {{ pagination.page_html|safe }}
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <hr>
+
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </form>
+
+        </div>
+    </div>
+{% endblock %}
+
+{% block js %}
+    <script>
+
+
+
+    </script>
+{% endblock %}
+

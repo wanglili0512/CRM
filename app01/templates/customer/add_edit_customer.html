@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block content %}
+     <div class="tpl-content-wrapper">
+        <div class="tpl-portlet-components">
+            <div class="portlet-title am-g">
+                <div class="caption font-green bold am-u-sm-3">
+                    {% if edit_obj %}
+                        编辑客户
+                    {% else %}
+                        添加客户
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="am-g">
+                <div class="am-u-md-6 am-u-md-offset-2">
+                    <form action="" method="post" class="am-form am-form-horizontal" novalidate>
+                        {% csrf_token %}
+                        {% for field in form %}
+                            <div class="am-form-group">
+                                <label for="" class="add_lb am-u-sm-3 am-form-label">{{ field.label }}</label>
+                                <div class="am-u-sm-9">
+                                    {{ field }}
+                                    <span class="error">{{ field.errors.0 }}</span>
+                                </div>
+                            </div>
+                        {% endfor %}
+
+                        <div class="am-form-group">
+                            <div class="am-u-sm-10 am-u-sm-offset-3">
+                                <button type="submit" class="am-btn am-btn-default">提交</button>
+                            </div>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
